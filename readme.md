@@ -4,13 +4,13 @@ Help you easily handle the different states of the page: No data, Successful, Fa
 
 ## Preview
 
-![Preveiw](https://cdn.jsdelivr.net/gh/ocnyang/compose-status-box/master/res/preview.gif)
+<img src="https://cdn.jsdelivr.net/gh/ocnyang/compose-status-box@master/res/preview.jpg" width="300px" alt="preview"/>
 
 ## Gradle Dependency
 
 ```groovy
 dependencies {
-    implementation 'com.github.ocnyang:compose-status-box:1.0.0'
+    implementation 'com.github.ocnyang:compose-status-box:1.0.1'
 }
 ```
 [[More dependent information]](https://jitpack.io/#OCNYang/compose-status-box)
