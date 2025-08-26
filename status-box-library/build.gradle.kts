@@ -2,11 +2,13 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("maven-publish")
+    id("kotlinx-serialization")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
     namespace = "com.ocnyang.status_box"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
@@ -37,7 +39,7 @@ android {
 }
 
 dependencies {
-    implementation(platform("androidx.compose:compose-bom:2024.02.00"))
+    implementation(platform("androidx.compose:compose-bom:2025.08.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -56,7 +58,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "com.github.ocnyang"
             artifactId = "compose-status-box"
-            version = "1.0.1"
+            version = "1.1.0"
 
             afterEvaluate {
                 from(components["release"])

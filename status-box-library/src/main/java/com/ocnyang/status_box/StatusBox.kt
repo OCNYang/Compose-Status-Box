@@ -1,59 +1,103 @@
 package com.ocnyang.status_box
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 
 @Composable
-fun <T> StatusBox(
-    modifier: Modifier = Modifier.fillMaxSize(),
-    stateContainer: StateContainer<T>,
-    contentScrollEnabled: Boolean = true,
+fun StatusBox(
+    modifier: Modifier = Modifier,
+    uiState: UIState,
+    loadingState: Pair<Boolean, Any?>,
     loadingBlockPress: Boolean = false,
     initComponentBlock: @Composable (BoxScope.(UIState.Initial) -> Unit)? = StatusBoxGlobalConfig.initComponent,
     emptyComponentBlock: @Composable (BoxScope.(UIState.Empty) -> Unit)? = StatusBoxGlobalConfig.emptyComponent,
     errorComponentBlock: @Composable (BoxScope.(UIState.Error) -> Unit)? = StatusBoxGlobalConfig.errorComponent,
     loadingComponentBlock: @Composable (BoxScope.(Pair<Boolean, Any?>) -> Unit)? = StatusBoxGlobalConfig.loadingComponent,
-    contentComponentBlock: @Composable (ColumnScope.(UIState.Success<T>) -> Unit)
+    contentComponentBlock: @Composable ((UIState) -> Unit)
 ) {
-    val uiState by stateContainer.uiStateFlow.collectAsState()
-    val loading by stateContainer.loadingStateFlow.collectAsState()
+    StatusBoxContent(
+        modifier = modifier,
+        uiState = uiState,
+        errorComponentBlock = errorComponentBlock,
+        emptyComponentBlock = emptyComponentBlock,
+        initComponentBlock = initComponentBlock,
+        contentComponentBlock = contentComponentBlock,
+        loadingState = loadingState,
+        loadingBlockPress = loadingBlockPress,
+        loadingComponentBlock = loadingComponentBlock
+    )
+}
 
+@Composable
+fun <T : UIState> StatusBox(
+    modifier: Modifier = Modifier,
+    uiState: UIState,
+    loadingState: Pair<Boolean, Any?>,
+    loadingBlockPress: Boolean = false,
+    successStateTransformFun: ((UIState) -> T) = { it as T },
+    initComponentBlock: @Composable (BoxScope.(UIState.Initial) -> Unit)? = StatusBoxGlobalConfig.initComponent,
+    emptyComponentBlock: @Composable (BoxScope.(UIState.Empty) -> Unit)? = StatusBoxGlobalConfig.emptyComponent,
+    errorComponentBlock: @Composable (BoxScope.(UIState.Error) -> Unit)? = StatusBoxGlobalConfig.errorComponent,
+    loadingComponentBlock: @Composable (BoxScope.(Pair<Boolean, Any?>) -> Unit)? = StatusBoxGlobalConfig.loadingComponent,
+    contentComponentBlock: @Composable ((T) -> Unit)
+) {
+    StatusBoxContent(
+        modifier = modifier,
+        uiState = uiState,
+        errorComponentBlock = errorComponentBlock,
+        emptyComponentBlock = emptyComponentBlock,
+        initComponentBlock = initComponentBlock,
+        contentComponentBlock = { contentComponentBlock(successStateTransformFun(it)) },
+        loadingState = loadingState,
+        loadingBlockPress = loadingBlockPress,
+        loadingComponentBlock = loadingComponentBlock
+    )
+}
+
+@Composable
+private fun StatusBoxContent(
+    modifier: Modifier,
+    uiState: UIState,
+    errorComponentBlock: @Composable (BoxScope.(UIState.Error) -> Unit)?,
+    emptyComponentBlock: @Composable (BoxScope.(UIState.Empty) -> Unit)?,
+    initComponentBlock: @Composable (BoxScope.(UIState.Initial) -> Unit)?,
+    contentComponentBlock: @Composable ((UIState) -> Unit),
+    loadingState: Pair<Boolean, Any?>,
+    loadingBlockPress: Boolean,
+    loadingComponentBlock: @Composable (BoxScope.(Pair<Boolean, Any?>) -> Unit)?
+) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         when (uiState) {
-            is UIState.Success ->
-                Column(
-                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState(), enabled = contentScrollEnabled)
-                ) {
-                    this.contentComponentBlock(uiState as UIState.Success<T>)
-                }
-
-            is UIState.Error -> errorComponentBlock?.invoke(this, uiState as UIState.Error)
-            is UIState.Empty -> emptyComponentBlock?.invoke(this, uiState as UIState.Empty)
-            is UIState.Initial -> initComponentBlock?.invoke(this, uiState as UIState.Initial)
+            is UIState.Error -> errorComponentBlock?.invoke(this, uiState)
+            is UIState.Empty -> emptyComponentBlock?.invoke(this, uiState)
+            is UIState.Initial -> initComponentBlock?.invoke(this, uiState)
+            else -> contentComponentBlock.invoke(uiState)
         }
 
-        if (loading.first) {
-            if (loadingBlockPress) {
-                Box(
-                    modifier = Modifier.fillMaxSize().pointerInput(Unit) {},
-                    contentAlignment = Alignment.Center
-                ) {
-                    loadingComponentBlock?.invoke(this, loading)
-                }
-            } else {
-                loadingComponentBlock?.invoke(this, loading)
+        AnimatedVisibility(visible = loadingState.first, modifier = Modifier.fillMaxSize()) {
+            val loadingModifier = remember(loadingBlockPress) {
+                if (loadingBlockPress)
+                    Modifier
+                        .fillMaxSize()
+                        .pointerInput(Unit) {}
+                else
+                    Modifier.fillMaxSize()
             }
+
+            Box(
+                modifier = loadingModifier,
+                contentAlignment = Alignment.Center
+            ) {
+                loadingComponentBlock?.invoke(this, loadingState)
+            }
+
         }
     }
 }

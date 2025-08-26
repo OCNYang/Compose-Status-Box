@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 fun StatusBoxGlobalConfig.initDef() {
     apply {
@@ -37,12 +38,12 @@ fun DefaultEmptyStateView(hintText: String = LocalContext.current.getString(R.st
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
-            modifier = Modifier.size(60.dp),
+            modifier = Modifier.size(25.dp),
             imageVector = ImageVector.vectorResource(id = iconRes),
             contentDescription = "empty",
             tint = MaterialTheme.colorScheme.onSurface
         )
-        Text(text = hintText, Modifier.padding(10.dp), color = Color.Gray)
+        Text(text = hintText, Modifier.padding(10.dp), color = Color.Gray, fontSize = 12.sp)
     }
 }
 
@@ -55,19 +56,19 @@ fun DefaultErrorStateView(hintText: String = LocalContext.current.getString(R.st
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
-            modifier = Modifier.size(66.dp),
+            modifier = Modifier.size(25.dp),
             imageVector = ImageVector.vectorResource(id = iconRes),
             contentDescription = "error",
             tint = MaterialTheme.colorScheme.error
         )
-        Text(text = hintText, Modifier.padding(10.dp), color = Color.Gray)
+        Text(text = hintText, Modifier.padding(10.dp), color = Color.Gray, fontSize = 12.sp)
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultLoadingStateView() {
-    CircularProgressIndicator(modifier = Modifier.size(28.dp), color = MaterialTheme.colorScheme.primary)
+    CircularProgressIndicator(modifier = Modifier.size(25.dp), color = MaterialTheme.colorScheme.primary)
 }
 
 @Preview(showBackground = true)
