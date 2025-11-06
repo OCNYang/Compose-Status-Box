@@ -48,6 +48,14 @@
             font-size: 16px;
             font-weight: 500;
         }
+        .error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid rgba(255, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            max-width: 600px;
+        }
         .github-corner {
             position: fixed;
             top: 0;
@@ -81,13 +89,51 @@
     <div id="ComposeTarget">
         <div class="loader" id="loader">
             <div class="spinner"></div>
-            <p>Loading StatusBox Demo...</p>
+            <p id="status">Loading StatusBox Demo...</p>
             <p style="font-size: 12px; margin-top: 10px; opacity: 0.8;">Compose Multiplatform • WebAssembly</p>
         </div>
     </div>
+
+    <script>
+        // Error handling
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e);
+            var loader = document.getElementById('loader');
+            if (loader) {
+                loader.innerHTML = '<div class="error">' +
+                    '<h2>⚠️ Error Loading Demo</h2>' +
+                    '<p><strong>Error:</strong> ' + (e.message || e.error || 'Unknown error') + '</p>' +
+                    '<p><strong>Browser Requirements:</strong></p>' +
+                    '<ul style="text-align: left;">' +
+                    '<li>Chrome/Edge 119+ (Dec 2023)</li>' +
+                    '<li>Firefox 120+ (Nov 2023)</li>' +
+                    '<li>Safari 17.4+ (Mar 2024, iOS 17.4+)</li>' +
+                    '</ul>' +
+                    '<p>Please try updating your browser or use a different one.</p>' +
+                    '</div>';
+            }
+        });
+
+        // Check WebAssembly support
+        if (typeof WebAssembly !== 'object') {
+            document.getElementById('loader').innerHTML = '<div class="error">' +
+                '<h2>⚠️ WebAssembly Not Supported</h2>' +
+                '<p>Your browser does not support WebAssembly.</p>' +
+                '<p>Please use a modern browser.</p>' +
+                '</div>';
+        }
+    </script>
     <script src="composeApp.js"></script>
     <script>
         // Hide loader once Compose is ready
+        var hideTimeout = setTimeout(function() {
+            var loader = document.getElementById('loader');
+            if (loader && loader.style.opacity !== '0') {
+                // Still loading after 10 seconds, show warning
+                document.getElementById('status').textContent = 'Still loading... This may take a moment on first load.';
+            }
+        }, 10000);
+
         window.addEventListener('load', function() {
             setTimeout(function() {
                 var loader = document.getElementById('loader');
@@ -96,9 +142,10 @@
                     loader.style.transition = 'opacity 0.5s';
                     setTimeout(function() {
                         loader.style.display = 'none';
+                        clearTimeout(hideTimeout);
                     }, 500);
                 }
-            }, 2000); // Longer delay for WASM initialization
+            }, 3000); // Longer delay for WASM initialization
         });
     </script>
 </body>
