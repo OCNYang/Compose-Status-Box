@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="StatusBox - Kotlin Multiplatform Compose library for managing UI states (Loading, Error, Empty, Success)">
-    <meta name="keywords" content="Compose Multiplatform, Kotlin, StatusBox, UI States, Loading, Error, Empty">
+    <meta name="keywords" content="Compose Multiplatform, Kotlin, StatusBox, UI States, Loading, Error, Empty, WebAssembly, Wasm">
     <meta name="author" content="OcnYang">
     <title>StatusBox Demo - Compose Multiplatform</title>
     <style>
@@ -67,7 +67,6 @@
             40%, 80% { transform: rotate(10deg); }
         }
     </style>
-    <script src="skiko.js"></script>
 </head>
 <body>
     <!-- GitHub Corner -->
@@ -79,12 +78,13 @@
         </svg>
     </a>
 
-    <div class="loader" id="loader">
-        <div class="spinner"></div>
-        <p>Loading StatusBox Demo...</p>
-        <p style="font-size: 12px; margin-top: 10px; opacity: 0.8;">Compose Multiplatform • Kotlin/JS</p>
+    <div id="ComposeTarget">
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>Loading StatusBox Demo...</p>
+            <p style="font-size: 12px; margin-top: 10px; opacity: 0.8;">Compose Multiplatform • WebAssembly</p>
+        </div>
     </div>
-    <canvas id="ComposeTarget"></canvas>
     <script src="composeApp.js"></script>
     <script>
         // Hide loader once Compose is ready
@@ -98,7 +98,7 @@
                         loader.style.display = 'none';
                     }, 500);
                 }
-            }, 1000);
+            }, 2000); // Longer delay for WASM initialization
         });
     </script>
 </body>
