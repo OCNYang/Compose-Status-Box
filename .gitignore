@@ -1,15 +1,109 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Built application files
+*.apk
+*.ap_
+*.aab
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+release/
+
+# Gradle files
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# Local configuration file (sdk path, etc)
 local.properties
+
+# IntelliJ IDEA
+*.iml
+*.iws
+*.ipr
+.idea/
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
+!.idea/copyright/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Android Studio Navigation editor temp files
+.navigation/
+
+# Android Studio captures folder
+captures/
+
+# Keystore files
+*.jks
+*.keystore
+
+# External native build folder
+.externalNativeBuild
+.cxx/
+
+# Version control
+vcs.xml
+
+# Lint
+lint/outputs/
+lint/tmp/
+lint/reports/
+
+# Android Profiling
+*.hprof
+
+# Kotlin
+*.kotlin_module
+
+# KMP Build outputs
+*/build/
+*/dist/
+*/kotlin-webpack/
+
+# Node.js (for Kotlin/JS)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Kotlin/JS compilation cache
+kotlin-js-store/
+.kotlin/
+
+# IMPORTANT: Keep docs/ for GitHub Pages
+!docs/
+!docs/**
+
+# Claude Code
+.claude/
