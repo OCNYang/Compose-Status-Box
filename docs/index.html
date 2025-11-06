@@ -15,12 +15,12 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+        canvas {
+            display: block;
+        }
         #ComposeTarget {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
         }
         .loader {
             position: absolute;
@@ -86,13 +86,13 @@
         </svg>
     </a>
 
-    <div id="ComposeTarget">
-        <div class="loader" id="loader">
-            <div class="spinner"></div>
-            <p id="status">Loading StatusBox Demo...</p>
-            <p style="font-size: 12px; margin-top: 10px; opacity: 0.8;">Compose Multiplatform • WebAssembly</p>
-        </div>
+    <div class="loader" id="loader">
+        <div class="spinner"></div>
+        <p id="status">Loading StatusBox Demo...</p>
+        <p style="font-size: 12px; margin-top: 10px; opacity: 0.8;">Compose Multiplatform • WebAssembly</p>
     </div>
+
+    <canvas id="ComposeTarget"></canvas>
 
     <script>
         // Error handling
