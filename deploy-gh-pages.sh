@@ -12,6 +12,7 @@ echo "📦 Copying files to docs/..."
 mkdir -p docs
 cp composeApp/build/kotlin-webpack/js/productionExecutable/composeApp.js docs/
 cp composeApp/build/processedResources/js/main/skiko.js docs/
+cp composeApp/build/processedResources/js/main/skiko.wasm docs/
 
 echo "✅ Build complete!"
 echo ""
@@ -26,4 +27,4 @@ echo "   - Folder: /docs"
 echo "4. Your demo will be available at: https://YOUR_USERNAME.github.io/YOUR_REPO/"
 echo ""
 echo "📊 File sizes:"
-ls -lh docs/*.js
+ls -lh docs/composeApp.js docs/skiko.js docs/skiko.wasm 2>/dev/null || ls -lh docs/*.js docs/*.wasm
