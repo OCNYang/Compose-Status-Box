@@ -11,6 +11,7 @@ echo "🚀 Building production WebAssembly bundle..."
 echo "📦 Copying files to docs/..."
 mkdir -p docs
 cp composeApp/build/kotlin-webpack/wasmJs/productionExecutable/* docs/
+cp -r composeApp/build/processedResources/wasmJs/main/composeResources docs/
 
 echo "✅ Build complete!"
 echo ""
