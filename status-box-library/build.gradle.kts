@@ -48,22 +48,12 @@ kotlin {
     // Web (Wasm) Target - Modern browsers
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        browser {
-            commonWebpackConfig {
-                outputFileName = "statusbox-wasm.js"
-            }
-        }
-        binaries.executable()
+        browser()
     }
 
     // Web (JS) Target - Legacy browser fallback
     js(IR) {
-        browser {
-            commonWebpackConfig {
-                outputFileName = "statusbox-js.js"
-            }
-        }
-        binaries.executable()
+        browser()
     }
 
     sourceSets {

@@ -14,22 +14,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.ocnyang.status_box.StatusBox
 import com.ocnyang.status_box.UIState
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 /**
- * Main application composable - shared across Desktop and Web
+ * Main application composable - shared across Android, Desktop and Web
  */
 @Composable
 fun App() {
+    val viewModel = remember { DemoViewModel() }
     MaterialTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            DemoScreen()
+            DemoScreen(viewModel)
         }
     }
 }
@@ -39,19 +36,11 @@ fun App() {
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DemoScreen() {
-    // State management
-    var uiState by remember { mutableStateOf<UIState>(UIState.Initial) }
-    var loading by remember { mutableStateOf(true to null as Any?) }
-    var itemCount by remember { mutableIntStateOf(5) }
-    val scope = rememberCoroutineScope()
-
-    // Auto-load data on first composition
-    LaunchedEffect(Unit) {
-        delay(2000)
-        uiState = DemoUIState.Success("StatusBox Demo")
-        loading = false to null
-    }
+fun DemoScreen(viewModel: DemoViewModel) {
+    // Collect state from ViewModel
+    val uiState by viewModel.uiState.collectAsState()
+    val loading by viewModel.loadingState.collectAsState()
+    val itemCount by viewModel.itemNumber.collectAsState()
 
     Scaffold(
         topBar = {
@@ -60,34 +49,25 @@ fun DemoScreen() {
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary,
                 ),
-                title = { Text("StatusBox Demo - Web & Desktop") }
+                title = { Text("StatusBox KMP Demo") }
             )
         },
         bottomBar = {
             ControlPanel(
                 onSuccessClick = {
-                    uiState = DemoUIState.Success("Success State!")
-                    loading = false to null
+                    viewModel.changeState(DemoUIState.Success("Success State!"))
                 },
                 onErrorClick = {
-                    uiState = UIState.Error("Something went wrong!")
-                    loading = false to null
+                    viewModel.changeState(UIState.Error("Something went wrong!"))
                 },
                 onEmptyClick = {
-                    uiState = UIState.Empty()
-                    loading = false to null
+                    viewModel.changeState(UIState.Empty())
                 },
                 onLoadingClick = {
-                    loading = true to null
+                    viewModel.changeLoading(true)
                 },
                 onReloadClick = {
-                    uiState = UIState.Initial
-                    loading = true to null
-                    scope.launch {
-                        delay(2000)
-                        uiState = DemoUIState.Success("Reloaded!")
-                        loading = false to null
-                    }
+                    viewModel.reload()
                 }
             )
         },
@@ -95,8 +75,8 @@ fun DemoScreen() {
             if (uiState is DemoUIState.Success) {
                 CounterButtons(
                     count = itemCount,
-                    onIncrement = { itemCount++ },
-                    onDecrement = { if (itemCount > 0) itemCount-- }
+                    onIncrement = { viewModel.changeItemNumber(itemCount + 1) },
+                    onDecrement = { viewModel.changeItemNumber(itemCount - 1) }
                 )
             }
         }

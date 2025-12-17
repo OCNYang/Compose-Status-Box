@@ -1,4 +1,10 @@
 <resources>
     <string name="hint_error">Sorry, loading error!</string>
     <string name="hint_empty">There's no data here~</string>
+
+    <!-- Paging related -->
+    <string name="paging_load_more_error">Failed to load more</string>
+    <string name="paging_click_retry">Tap to retry</string>
+    <string name="paging_no_more">No more data</string>
+    <string name="paging_loading">Loading...</string>
 </resources>

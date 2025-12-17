@@ -16,6 +16,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "ComposeStatusBox"
-include(":app")
+// include(":app")  // Deprecated: Replaced by composeApp with Android support
 include(":status-box-library")
 include(":composeApp")

@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     kotlin("multiplatform")
+    id("com.android.application")
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.plugin.compose")
 }
@@ -13,6 +14,14 @@ plugins {
 kotlin {
     // Apply default hierarchy template
     applyDefaultHierarchyTemplate()
+
+    // Android Target
+    androidTarget {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+    }
 
     // Desktop Target (JVM)
     jvm("desktop") {
@@ -63,6 +72,13 @@ kotlin {
             implementation(compose.components.resources)
         }
 
+        // Android dependencies
+        androidMain.dependencies {
+            implementation("androidx.activity:activity-compose:1.9.0")
+            implementation("androidx.core:core-ktx:1.13.1")
+            implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0")
+        }
+
         // Desktop dependencies
         val desktopMain by getting {
             dependencies {
@@ -71,6 +87,41 @@ kotlin {
         }
 
         // Web targets automatically inherit from commonMain
+    }
+}
+
+// Android configuration
+android {
+    namespace = "com.ocnyang.compose_status_box_demo"
+    compileSdk = 35
+
+    defaultConfig {
+        applicationId = "com.ocnyang.compose_status_box_demo"
+        minSdk = 24
+        targetSdk = 35
+        versionCode = 1
+        versionName = "1.0.0"
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        compose = true
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }
 
