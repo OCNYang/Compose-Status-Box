@@ -1,4 +1,4 @@
 <resources>
     <string name="hint_error">Sorry, loading error!</string>
-    <string name="hint_empty">There\'s no data here~</string>
+    <string name="hint_empty">There's no data here~</string>
 </resources>

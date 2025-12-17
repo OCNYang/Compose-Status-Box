@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.api
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -73,6 +74,7 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
+            implementation("androidx.paging:paging-compose:3.4.0-alpha04")
         }
 
         // Android Main

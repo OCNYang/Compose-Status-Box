@@ -17,10 +17,10 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ocnyang.status_box.resources.Res
-import com.ocnyang.status_box.resources.ic_empty
-import com.ocnyang.status_box.resources.ic_error
 import com.ocnyang.status_box.resources.hint_empty
 import com.ocnyang.status_box.resources.hint_error
+import com.ocnyang.status_box.resources.ic_empty
+import com.ocnyang.status_box.resources.ic_error
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -38,24 +38,11 @@ fun DefaultEmptyStateView(
     hintText: String? = null,
     iconPainter: Painter? = null
 ) {
-    Column(
-        modifier = Modifier.wrapContentSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            modifier = Modifier.size(25.dp),
-            painter = iconPainter ?: painterResource(Res.drawable.ic_empty),
-            contentDescription = "empty",
-            tint = MaterialTheme.colorScheme.onSurface
-        )
-        Text(
-            text = hintText ?: stringResource(Res.string.hint_empty),
-            modifier = Modifier.padding(10.dp),
-            color = Color.Gray,
-            fontSize = 12.sp
-        )
-    }
+    IconTextMapContent(
+        hintText = hintText ?: stringResource(Res.string.hint_empty),
+        iconPainter = iconPainter ?: painterResource(Res.drawable.ic_empty),
+        iconTint = MaterialTheme.colorScheme.onSurface
+    )
 }
 
 @Composable
@@ -63,25 +50,13 @@ fun DefaultErrorStateView(
     hintText: String? = null,
     iconPainter: Painter? = null
 ) {
-    Column(
-        modifier = Modifier.wrapContentSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            modifier = Modifier.size(25.dp),
-            painter = iconPainter ?: painterResource(Res.drawable.ic_error),
-            contentDescription = "error",
-            tint = MaterialTheme.colorScheme.error
-        )
-        Text(
-            text = hintText ?: stringResource(Res.string.hint_error),
-            modifier = Modifier.padding(10.dp),
-            color = Color.Gray,
-            fontSize = 12.sp
-        )
-    }
+    IconTextMapContent(
+        hintText = hintText ?: stringResource(Res.string.hint_error),
+        iconPainter = iconPainter ?: painterResource(Res.drawable.ic_error),
+        iconTint = MaterialTheme.colorScheme.error
+    )
 }
+
 
 @Composable
 fun DefaultLoadingStateView() {
@@ -94,4 +69,30 @@ fun DefaultLoadingStateView() {
 @Composable
 fun DefaultInitialStateView() {
     // Empty implementation
+}
+
+@Composable
+private fun IconTextMapContent(
+    hintText: String,
+    iconPainter: Painter,
+    iconTint: Color,
+) {
+    Column(
+        modifier = Modifier.wrapContentSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(
+            modifier = Modifier.size(45.dp),
+            painter = iconPainter,
+            contentDescription = "error",
+            tint = iconTint
+        )
+        Text(
+            text = hintText,
+            modifier = Modifier.padding(10.dp),
+            color = Color.Gray,
+            fontSize = 14.sp
+        )
+    }
 }
