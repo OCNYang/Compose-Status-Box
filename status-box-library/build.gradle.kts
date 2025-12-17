@@ -45,15 +45,19 @@ kotlin {
         }
     }
 
-    // Web (Wasm) Target - Modern browsers
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-    }
+    // Conditionally enable Web targets (skip on JitPack to avoid Node.js GLIBC issues)
+    val isJitpackBuild = project.hasProperty("jitpackBuild")
+    if (!isJitpackBuild) {
+        // Web (Wasm) Target - Modern browsers
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmJs {
+            browser()
+        }
 
-    // Web (JS) Target - Legacy browser fallback
-    js(IR) {
-        browser()
+        // Web (JS) Target - Legacy browser fallback
+        js(IR) {
+            browser()
+        }
     }
 
     sourceSets {

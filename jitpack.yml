@@ -1,0 +1,5 @@
+jdk:
+  - openjdk17
+
+install:
+  - ./gradlew clean -Pgroup=com.github.OCNYang -Pversion=$VERSION -xtest -xlint -PjitpackBuild=true :status-box-library:assemble :status-box-library:publishToMavenLocal

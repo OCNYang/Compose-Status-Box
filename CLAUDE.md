@@ -76,6 +76,31 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Tag format: v2.0.0 (for KMP version)
 ```
 
+### JitPack Configuration
+
+The repository includes a `jitpack.yml` configuration file that customizes the build process for JitPack:
+
+**Key Configuration Points:**
+- Uses JDK 17 (matching project requirements)
+- Builds only the `status-box-library` module (excludes demo apps)
+- **Conditionally disables Web targets (JS/Wasm)** via `-PjitpackBuild=true` flag to avoid Node.js GLIBC compatibility issues on JitPack's build servers
+
+**Why Web Targets are Disabled on JitPack:**
+JitPack's build environment uses older GLIBC versions incompatible with Node.js 22+, causing build failures. Since the library's primary targets are Android, iOS, and Desktop, Web targets are only built locally and excluded from JitPack publication.
+
+**Published Artifacts:**
+- `status-box-library` (Android AAR)
+- `status-box-library-desktop` (JVM JAR)
+- `status-box-library-iosarm64` (iOS Framework)
+- `status-box-library-iosx64` (iOS Framework)
+- `status-box-library-iossimulatorarm64` (iOS Framework)
+
+**Local Development:**
+Web targets (JS/Wasm) are still available for local development and testing. To build locally with all targets:
+```bash
+./gradlew build  # Builds all platforms including Web
+```
+
 ## Core Architecture
 
 ### Kotlin Multiplatform Setup
