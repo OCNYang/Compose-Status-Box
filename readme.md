@@ -15,6 +15,7 @@
 - 🌍 **全平台支持**：支持 Android、iOS、Desktop (JVM)、Web (Wasm/JS)
 - 🎨 **高度可定制**：支持全局配置和局部自定义状态组件
 - 🔄 **类型安全**：通过泛型和密封类确保类型安全
+- 📜 **Paging 集成**：内置 Paging3 支持，轻松实现列表分页加载
 - 🪶 **轻量级**：核心库体积小，无额外依赖
 - 📦 **开箱即用**：内置默认状态视图，快速上手
 
@@ -147,6 +148,250 @@ StatusBox(
     // 成功内容
 }
 ```
+
+### Paging3 列表集成
+
+StatusBox 提供了与 Paging3 的无缝集成，通过扩展函数 `items()` 自动处理分页加载的各种状态（首次加载、刷新、追加、前置、错误等）。
+
+#### 添加依赖
+
+在 `build.gradle.kts` 的 `commonMain` 中添加 Paging 依赖：
+
+```kotlin
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation("com.github.ocnyang:compose-status-box-kmp:2.0.0")
+            implementation("androidx.paging:paging-compose:3.4.0-alpha04")
+        }
+    }
+}
+```
+
+#### 基础用法
+
+`items()` 扩展函数支持 `LazyColumn`、`LazyRow`、`LazyGrid` 和 `LazyStaggeredGrid`，自动处理所有分页状态：
+
+```kotlin
+@Composable
+fun PagingDemoScreen() {
+    val pager = remember {
+        Pager(
+            config = PagingConfig(pageSize = 20, enablePlaceholders = false)
+        ) {
+            YourPagingSource()  // 实现 PagingSource<Int, YourDataType>
+        }
+    }
+    val lazyPagingItems = pager.flow.collectAsLazyPagingItems()
+
+    LazyColumn {
+        items(
+            pagingItems = lazyPagingItems,
+            key = { it.id }  // 提供唯一 key 以优化性能
+        ) { item ->
+            // 渲染每个数据项
+            ItemCard(item = item)
+        }
+    }
+}
+```
+
+#### 追加加载（Append）- 底部加载更多
+
+适用于新闻列表、商品列表等向下滚动加载更多的场景：
+
+```kotlin
+LazyColumn {
+    items(
+        pagingItems = lazyPagingItems,
+        key = { it.id }
+    ) { item ->
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(text = item.title)
+            Text(text = item.description)
+        }
+    }
+}
+```
+
+特点：
+- 向下滚动时自动加载下一页
+- 底部显示加载指示器
+- 加载失败时底部显示错误提示和重试按钮
+- 到达最后一页时显示"没有更多数据"
+
+#### 前置加载（Prepend）- 顶部加载历史
+
+适用于聊天消息、时间线等向上滚动加载历史数据的场景：
+
+```kotlin
+val listState = rememberLazyListState()
+
+// 首次加载后自动滚动到底部（最新消息）
+LaunchedEffect(lazyPagingItems.itemCount) {
+    if (lazyPagingItems.itemCount > 0 && listState.firstVisibleItemIndex == 0) {
+        listState.scrollToItem(lazyPagingItems.itemCount - 1)
+    }
+}
+
+LazyColumn(
+    state = listState,
+    reverseLayout = true  // 反向布局：最新消息在底部
+) {
+    items(
+        pagingItems = lazyPagingItems,
+        key = { it.id }
+    ) { item ->
+        ChatMessageCard(message = item)
+    }
+}
+```
+
+特点：
+- `reverseLayout = true`：列表反向布局，最新数据在底部
+- 向上滚动时自动加载历史数据
+- 顶部显示加载指示器
+- 加载失败时顶部显示错误提示和重试按钮
+
+#### 自定义分页状态视图
+
+`items()` 扩展函数支持完全自定义所有状态视图：
+
+```kotlin
+LazyColumn {
+    items(
+        pagingItems = lazyPagingItems,
+        key = { it.id },
+        // 自定义加载视图
+        loadingContent = {
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+                Text("加载中...", modifier = Modifier.padding(start = 8.dp))
+            }
+        },
+        // 自定义错误视图
+        errorContent = { error, retry ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .clickable { retry() },
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(Icons.Default.Error, contentDescription = null, tint = Color.Red)
+                Text("加载失败：${error.message}", color = Color.Red)
+                Button(onClick = retry) {
+                    Text("点击重试")
+                }
+            }
+        },
+        // 自定义"没有更多"视图
+        noMoreContent = {
+            Text(
+                text = "已经到底了",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                textAlign = TextAlign.Center,
+                color = Color.Gray
+            )
+        },
+        // 自定义首次加载错误视图
+        initialLoadErrorContent = { error, retry ->
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text("数据加载失败", style = MaterialTheme.typography.headlineSmall)
+                Text(error.message, color = Color.Gray)
+                Button(onClick = retry, modifier = Modifier.padding(top = 16.dp)) {
+                    Text("重新加载")
+                }
+            }
+        }
+    ) { item ->
+        ItemCard(item = item)
+    }
+}
+```
+
+#### LazyGrid 和 LazyStaggeredGrid 支持
+
+`items()` 扩展同样适用于网格布局：
+
+```kotlin
+// LazyVerticalGrid
+LazyVerticalGrid(
+    columns = GridCells.Fixed(2)
+) {
+    items(
+        pagingItems = lazyPagingItems,
+        key = { it.id }
+    ) { item ->
+        GridItemCard(item = item)
+    }
+}
+
+// LazyStaggeredGrid
+LazyVerticalStaggeredGrid(
+    columns = StaggeredGridCells.Fixed(2)
+) {
+    items(
+        pagingItems = lazyPagingItems,
+        key = { it.id }
+    ) { item ->
+        StaggeredGridItemCard(item = item)
+    }
+}
+```
+
+#### API 参数说明
+
+```kotlin
+fun <T : Any> LazyListScope.items(
+    pagingItems: LazyPagingItems<T>,           // Paging3 的数据流
+    key: ((item: T) -> Any)? = null,           // 唯一 key，用于列表优化
+    contentType: ((item: T) -> Any)? = null,   // 内容类型，用于列表优化
+
+    // 自定义加载视图（追加/前置加载时显示）
+    loadingContent: @Composable LazyItemScope.() -> Unit = { /* 默认加载视图 */ },
+
+    // 自定义错误视图（追加/前置加载失败时显示）
+    errorContent: @Composable LazyItemScope.(error: Throwable, retry: () -> Unit) -> Unit = { /* 默认错误视图 */ },
+
+    // 自定义"没有更多"视图
+    noMoreContent: @Composable (LazyItemScope.() -> Unit)? = { /* 默认提示 */ },
+
+    // 自定义初始加载视图（首次加载时显示）
+    initialLoadingContent: @Composable (() -> Unit)? = { /* 默认初始加载视图 */ },
+
+    // 自定义初始加载错误视图（首次加载失败时显示）
+    initialLoadErrorContent: @Composable ((error: Throwable, retry: () -> Unit) -> Unit)? = { /* 默认错误视图 */ },
+
+    // 自定义空数据视图（数据源返回空列表时显示）
+    emptyContent: @Composable (() -> Unit)? = { /* 默认空视图 */ },
+
+    // 自定义刷新加载视图（下拉刷新时显示）
+    refreshLoadingContent: @Composable (() -> Unit)? = { /* 默认刷新视图 */ },
+
+    // 数据项内容渲染
+    itemContent: @Composable LazyItemScope.(value: T) -> Unit
+)
+```
+
+#### 完整示例
+
+查看 `composeApp` 模块中的完整示例：
+- `PagingAppendDemoScreen.kt`：底部加载更多示例
+- `PagingPrependDemoScreen.kt`：顶部加载历史示例（聊天风格）
 
 ### 全局配置
 
