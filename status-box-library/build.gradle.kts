@@ -119,8 +119,13 @@ publishing {
     publications {
         withType<MavenPublication> {
             groupId = "com.github.ocnyang"
-            artifactId = "compose-status-box-kmp"
-            version = "2.0.0"
+            // For KMP libraries, only set artifactId for the root publication
+            // Platform-specific publications will automatically get suffixes
+            if (name == "kotlinMultiplatform") {
+                artifactId = "compose-status-box-kmp"
+            }
+            // Other publications (androidRelease, androidDebug, desktop, etc.)
+            // will use default names: status-box-library-<platform>
         }
     }
 }
