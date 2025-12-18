@@ -45,7 +45,7 @@ repositories {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("com.github.ocnyang:compose-status-box-kmp:2.0.0")
+            implementation("com.github.OCNYang.compose-status-box:compose-status-box-kmp:2.0.3")
         }
     }
 }
@@ -55,11 +55,19 @@ kotlin {
 
 ```groovy
 dependencies {
-    implementation 'com.github.ocnyang:compose-status-box:1.0.1'
+    implementation 'com.github.OCNYang.compose-status-box:status-box-library-android:2.0.3'
 }
 ```
 
 [![](https://jitpack.io/v/OCNYang/compose-status-box.svg)](https://jitpack.io/#OCNYang/compose-status-box)
+
+```
+✅ Build artifacts:
+com.github.OCNYang.compose-status-box:status-box-library-android-debug:2.0.3
+com.github.OCNYang.compose-status-box:status-box-library-android:2.0.3
+com.github.OCNYang.compose-status-box:compose-status-box-kmp:2.0.3
+com.github.OCNYang.compose-status-box:status-box-library-desktop:2.0.3
+```
 
 ## 🚀 快速开始
 
